@@ -12,9 +12,13 @@ pub struct GameGrid {
 
 impl GameGrid {
     pub fn new(screen_width: f32, screen_height: f32, grid_size: u32) -> GameGrid {
+        //using this to create a square by taking the min between height and width
         let game_size = screen_width.min(screen_height);
+        //offset between screen end and grid end
         let offset_x = (screen_width - game_size) / 2. + 10.;
+        //offset between screen end and grid end
         let offset_y = (screen_height - game_size) / 2. + 10.;
+        //individual size of square in grid
         let square_size = (screen_height - offset_y * 2.) / grid_size as f32;
 
         GameGrid {
@@ -29,6 +33,7 @@ impl GameGrid {
 
     pub fn draw(&self) {
         for i in 0..(self.grid_size + 1.) as i32 {
+            //draw the horizontal lines
             draw_line(
                 0. + self.offset_x,
                 self.offset_y + self.square_size * i as f32,
@@ -38,6 +43,7 @@ impl GameGrid {
                 BLACK,
             );
 
+            //draw the vertical lines
             draw_line(
                 self.offset_x + self.square_size * i as f32,
                 0. + self.offset_y,

@@ -31,9 +31,13 @@ impl Snake {
         );
     }
     pub fn change_dir(&mut self, point: Point) {
-        if self.dir.0 + point.0 != 0 && self.dir.1 + point.1 != 0 {
-            self.dir = point;
-        }
+        self.dir = point;
+    }
+    pub fn update(&mut self) {
+        let old_head = self.head.clone();
+        self.head = (self.head.0 + self.dir.0, self.head.1 + self.dir.1);
+        self.body.push_front(old_head);
+        self.body.pop_back();
     }
     pub fn draw(&self, grid: &GameGrid) {
         //draw head

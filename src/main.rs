@@ -12,12 +12,19 @@ async fn main() {
     let mut snake: Snake = Snake::new();
     let grid: GameGrid = GameGrid::new(screen_width(), screen_height(), GRID_SIZE);
     let game_over: bool = false;
-    let snake_controller: SnakeController = SnakeController::new(&snake);
+    let mut snake_controller: SnakeController = SnakeController::new(snake.dir.clone());
+    let speed = 1.0;
+    let mut last_update = get_time();
     loop {
         if !game_over {
-            clear_background(WHITE);
             let dir = snake_controller.handle_input();
             snake.change_dir(dir);
+            if get_time() - last_update > speed {
+                println!("{} {} current dir", dir.0, dir.1);
+                snake.update();
+                last_update = get_time();
+            }
+            clear_background(WHITE);
             snake.draw(&grid);
             grid.draw();
         }
