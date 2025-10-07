@@ -11,10 +11,12 @@ impl<'a> SnakeController {
     }
 
     pub fn handle_input(&mut self) -> Point {
+        //constants for up, down, left, right vectors
         let up = (0, -1);
         let down = (0, 1);
         let right = (1, 0);
         let left = (-1, 0);
+
         if let Some(key) = get_last_key_pressed() {
             let dir = match key {
                 KeyCode::Right => {
@@ -27,6 +29,8 @@ impl<'a> SnakeController {
                 _ => self.initial_dir,
             };
 
+            //do not change direction if the user tries to input the opposite direction since the
+            //snake cannot move into itself
             if self.initial_dir.0 + dir.0 != 0 && self.initial_dir.1 + dir.1 != 0 {
                 self.initial_dir = dir;
             }

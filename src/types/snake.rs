@@ -39,6 +39,14 @@ impl Snake {
         self.body.push_front(old_head);
         self.body.pop_back();
     }
+    pub fn check_inbounds(&self, grid: &GameGrid) -> bool {
+        return (0.0 <= self.head.0 as f32 && grid.grid_size > self.head.0 as f32)
+            && (0.0 <= self.head.1 as f32 && grid.grid_size > self.head.1 as f32);
+    }
+
+    pub fn check_fruit_collision(&self, current_fruit_point: Point) -> bool {
+        return self.head.0 == current_fruit_point.0 && self.head.1 == current_fruit_point.1;
+    }
     pub fn draw(&self, grid: &GameGrid) {
         //draw head
         Self::draw_snake_part(grid, &self.head, DARKGREEN);
