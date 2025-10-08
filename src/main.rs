@@ -1,5 +1,5 @@
 use ::rand::random_range;
-use macroquad::{prelude::*, rand::rand};
+use macroquad::{audio, prelude::*, rand::rand};
 use std::collections::LinkedList;
 use types::{game_grid::*, point::*, snake::*, snake_controller::*};
 use window_conf::conf;
@@ -66,16 +66,23 @@ fn fruit_has_been_eaten(current_fruit_point: &Point) -> bool {
 
 #[macroquad::main(conf)]
 async fn main() {
+    set_pc_assets_folder("assets");
+    let music = audio::load_sound("snake-music.wav").await.unwrap();
+    let params: audio::PlaySoundParams = audio::PlaySoundParams {
+        looped: true,
+        volume: 0.5,
+    };
     let mut snake: Snake = Snake::new();
     let grid: GameGrid = GameGrid::new(screen_width(), screen_height(), GRID_SIZE);
     let mut game_over: bool = false;
     let mut snake_controller: SnakeController = SnakeController::new(snake.dir.clone());
-    let speed = 0.5;
+    let speed = 0.3;
     let food_spawn_rate = 2.0;
     let mut score = 0 as i32;
     let mut last_movement_update = get_time();
     let mut last_fruit_spawn = get_time();
     let mut current_fruit_point = (5, 5);
+    audio::play_sound(&music, params);
     loop {
         if !game_over {
             let dir = snake_controller.handle_input();
