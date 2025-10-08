@@ -1,5 +1,9 @@
 use ::rand::random_range;
-use macroquad::{audio, prelude::*, rand::rand};
+use macroquad::{
+    audio::{self, stop_sound},
+    prelude::*,
+    rand::rand,
+};
 use std::{collections::LinkedList, fmt::format};
 use types::{game_grid::*, point::*, snake::*, snake_controller::*};
 use window_conf::conf;
@@ -123,6 +127,7 @@ async fn main() {
             }
         } else {
             clear_background(WHITE);
+            stop_sound(&music);
             let text = "Game Over. Press [enter] to play again.";
             let font_size = 30.;
             let text_size = measure_text(text, None, font_size as _, 1.0);
