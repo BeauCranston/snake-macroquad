@@ -1,6 +1,6 @@
 use ::rand::random_range;
 use macroquad::{
-    audio::{self, stop_sound},
+    audio::{self, play_sound, stop_sound},
     prelude::*,
     rand::rand,
 };
@@ -72,7 +72,7 @@ fn fruit_has_been_eaten(current_fruit_point: &Point) -> bool {
 async fn main() {
     set_pc_assets_folder("assets");
     let music = audio::load_sound("snake-music.wav").await.unwrap();
-    let params: audio::PlaySoundParams = audio::PlaySoundParams {
+    let music_params: audio::PlaySoundParams = audio::PlaySoundParams {
         looped: true,
         volume: 0.5,
     };
@@ -86,7 +86,7 @@ async fn main() {
     let mut last_movement_update = get_time();
     let mut last_fruit_spawn = get_time();
     let mut current_fruit_point = (5, 5);
-    audio::play_sound(&music, params);
+    audio::play_sound(&music, music_params);
     loop {
         if !game_over {
             let dir = snake_controller.handle_input();
@@ -161,6 +161,13 @@ async fn main() {
                 last_movement_update = get_time();
                 last_fruit_spawn = get_time();
                 game_over = false;
+                play_sound(
+                    &music,
+                    audio::PlaySoundParams {
+                        looped: true,
+                        volume: 0.5,
+                    },
+                );
             }
         }
         next_frame().await
