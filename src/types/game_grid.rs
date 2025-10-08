@@ -15,9 +15,9 @@ impl GameGrid {
         //using this to create a square by taking the min between height and width
         let game_size = screen_width.min(screen_height);
         //offset between screen end and grid end
-        let offset_x = (screen_width - game_size) / 2. + 10.;
+        let offset_x = (screen_width - game_size) / 2. + 100.;
         //offset between screen end and grid end
-        let offset_y = (screen_height - game_size) / 2. + 10.;
+        let offset_y = (screen_height - game_size) / 2. + 100.;
         //individual size of square in grid
         let square_size = (screen_height - offset_y * 2.) / grid_size as f32;
 

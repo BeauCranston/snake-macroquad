@@ -1,6 +1,6 @@
 use ::rand::random_range;
 use macroquad::{audio, prelude::*, rand::rand};
-use std::collections::LinkedList;
+use std::{collections::LinkedList, fmt::format};
 use types::{game_grid::*, point::*, snake::*, snake_controller::*};
 use window_conf::conf;
 
@@ -76,7 +76,7 @@ async fn main() {
     let grid: GameGrid = GameGrid::new(screen_width(), screen_height(), GRID_SIZE);
     let mut game_over: bool = false;
     let mut snake_controller: SnakeController = SnakeController::new(snake.dir.clone());
-    let speed = 0.3;
+    let speed = 0.2;
     let food_spawn_rate = 2.0;
     let mut score = 0 as i32;
     let mut last_movement_update = get_time();
@@ -102,13 +102,62 @@ async fn main() {
                 last_fruit_spawn = get_time();
             }
             clear_background(WHITE);
+            draw_text(
+                "Snake!",
+                (grid.screen_width / 2.0) - 50.0,
+                50.0,
+                50.0,
+                BLACK,
+            );
+            draw_text(
+                format!("Score: {}", score).as_str(),
+                (grid.screen_width / 2.0) - 50.0,
+                80.0,
+                30.0,
+                BLACK,
+            );
             snake.draw(&grid);
             grid.draw();
             if !fruit_has_been_eaten(&current_fruit_point) {
                 draw_fruit(&grid, current_fruit_point);
             }
-        }
+        } else {
+            clear_background(WHITE);
+            let text = "Game Over. Press [enter] to play again.";
+            let font_size = 30.;
+            let text_size = measure_text(text, None, font_size as _, 1.0);
+            let score_text = format!("Your Final Score Was: {}", score);
+            let score_text_size = measure_text(&score_text, None, font_size as _, 1.0);
 
+            draw_text(
+                &score_text,
+                screen_width() / 2.0 - score_text_size.width / 2.0,
+                screen_height() / 4.0 + score_text_size.height / 2.0,
+                font_size,
+                BLACK,
+            );
+
+            draw_text(
+                text,
+                screen_width() / 2. - text_size.width / 2.,
+                screen_height() / 2. + text_size.height / 2.,
+                font_size,
+                DARKGRAY,
+            );
+
+            if is_key_down(KeyCode::Enter) {
+                snake = Snake {
+                    head: (0, 0),
+                    dir: (1, 0),
+                    body: LinkedList::new(),
+                };
+                current_fruit_point = spawn_fruit();
+                score = 0;
+                last_movement_update = get_time();
+                last_fruit_spawn = get_time();
+                game_over = false;
+            }
+        }
         next_frame().await
     }
 }
