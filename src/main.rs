@@ -111,11 +111,11 @@ async fn main() {
                 30.0,
                 BLACK,
             );
-            snake.draw(&grid);
-            grid.draw();
             if !fruit_has_been_eaten(&current_fruit_point) {
                 draw_fruit(&grid, current_fruit_point);
             }
+            snake.draw(&grid);
+            grid.draw();
         } else {
             clear_background(WHITE);
             stop_sound(&music);
