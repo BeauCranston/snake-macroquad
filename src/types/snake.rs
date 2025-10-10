@@ -45,6 +45,12 @@ impl Snake {
     pub fn draw(&self, grid: &GameGrid) {
         //draw head
         // Self::draw_snake_part(grid, &self.head, DARKGREEN);
+        let rotation = match self.dir.0 {
+            -1 => -90,
+            0 => 0,
+            1 => 90,
+            _ => 0,
+        };
         draw_texture_ex(
             &self.head_texture,
             grid.offset_x + self.head.0 as f32 * grid.square_size,
@@ -52,6 +58,8 @@ impl Snake {
             WHITE,
             DrawTextureParams {
                 dest_size: Some(vec2(grid.square_size, grid.square_size)),
+                rotation: rotation as f32,
+                flip_y: self.dir.1 > 0,
                 ..Default::default()
             },
         );
