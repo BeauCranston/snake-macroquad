@@ -1,8 +1,8 @@
-use std::collections::LinkedList;
+use std::{collections::LinkedList, f32::consts::PI};
 
 use macroquad::{
     color::{Color, DARKGREEN, GREEN, WHITE},
-    math::vec2,
+    math::{self, vec2},
     shapes::draw_rectangle,
     texture::{DrawTextureParams, Texture2D, draw_texture, draw_texture_ex, load_texture},
 };
@@ -46,9 +46,11 @@ impl Snake {
         //draw head
         // Self::draw_snake_part(grid, &self.head, DARKGREEN);
         let rotation = match self.dir.0 {
-            -1 => -90.0,
+            //convert degrees to radians
+            -1 => -90.0 * (PI / 180.0),
             0 => 0.0,
-            1 => 90.0,
+            //convert degrees to radians
+            1 => 90.0 * (PI / 180.0),
             _ => 0.0,
         };
         draw_texture_ex(

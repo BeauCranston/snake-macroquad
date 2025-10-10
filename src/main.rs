@@ -77,6 +77,7 @@ async fn main() {
         volume: 0.5,
     };
     let snake_head_texture = load_texture("snake-head.png").await.unwrap();
+    snake_head_texture.set_filter(FilterMode::Nearest);
     let mut snake: Snake = Snake::new(snake_head_texture);
     let grid: GameGrid = GameGrid::new(screen_width(), screen_height(), GRID_SIZE);
     let mut game_over: bool = false;
