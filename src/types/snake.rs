@@ -39,12 +39,7 @@ impl Snake {
             color,
         );
     }
-    pub fn change_dir(&mut self, point: Point) {
-        self.dir = point;
-    }
-    pub fn draw(&self, grid: &GameGrid) {
-        //draw head
-        // Self::draw_snake_part(grid, &self.head, DARKGREEN);
+    fn draw_snake_part_two(&self, grid: &GameGrid, point: &Point, texture: &Texture2D) {
         let rotation = match self.dir.0 {
             //convert degrees to radians
             -1 => -90.0 * (PI / 180.0),
@@ -54,9 +49,9 @@ impl Snake {
             _ => 0.0,
         };
         draw_texture_ex(
-            &self.head_texture,
-            grid.offset_x + self.head.0 as f32 * grid.square_size,
-            grid.offset_y + self.head.1 as f32 * grid.square_size,
+            texture,
+            grid.offset_x + point.0 as f32 * grid.square_size,
+            grid.offset_y + point.1 as f32 * grid.square_size,
             WHITE,
             DrawTextureParams {
                 dest_size: Some(vec2(grid.square_size, grid.square_size)),
@@ -65,6 +60,25 @@ impl Snake {
                 ..Default::default()
             },
         );
+    }
+    pub fn change_dir(&mut self, point: Point) {
+        self.dir = point;
+    }
+    pub fn draw(&self, grid: &GameGrid) {
+        //draw head
+        Self::draw_snake_part_two(self, grid, &self.head, &self.head_texture);
+        // draw_texture_ex(
+        //     &self.head_texture,
+        //     grid.offset_x + self.head.0 as f32 * grid.square_size,
+        //     grid.offset_y + self.head.1 as f32 * grid.square_size,
+        //     WHITE,
+        //     DrawTextureParams {
+        //         dest_size: Some(vec2(grid.square_size, grid.square_size)),
+        //         rotation: rotation,
+        //         flip_y: self.dir.1 > 0,
+        //         ..Default::default()
+        //     },
+        // );
         for point in &self.body {
             Self::draw_snake_part(grid, point, GREEN);
         }
