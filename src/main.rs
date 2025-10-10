@@ -32,35 +32,18 @@ fn draw_fruit(grid: &GameGrid, point: Point) {
 
 fn update(snake: &mut Snake, current_fruit_point: &mut Point, score: &mut i32) {
     // save current head in variable
-    let old_head = snake.head.clone();
-    //move snake head to new position
-    snake.head.location = (
-        snake.head.location.0 + snake.head.dir.0,
-        snake.head.location.1 + snake.head.dir.1,
-    );
-    //push old head to body
-    snake.body.push_front(old_head);
     let eating_fruit = snake.head.location.0 == current_fruit_point.0
         && snake.head.location.1 == current_fruit_point.1;
-    if !eating_fruit {
-        //pop off end of tail
-        snake.body.pop_back();
-    } else {
+
+    snake.move_snake(eating_fruit);
+
+    if eating_fruit {
         //if fruit has been eaten, grow size by not popping tail
         *score += 1;
         current_fruit_point.0 = 0;
         current_fruit_point.1 = 0;
         println!("{} score", *score);
     }
-}
-fn check_self_eat(snake: &Snake) -> bool {
-    let mut eating_self = false;
-    for node in &snake.body {
-        if snake.head.location.0 == node.location.0 && snake.head.location.1 == node.location.1 {
-            eating_self = true;
-        }
-    }
-    eating_self
 }
 fn check_inbounds(snake: &Snake, grid: &GameGrid) -> bool {
     return (0.0 <= snake.head.location.0 as f32 && grid.grid_size > snake.head.location.0 as f32)
@@ -102,7 +85,7 @@ async fn main() {
             if get_time() - last_movement_update > speed {
                 println!("{} {} current dir", dir.0, dir.1);
                 update(&mut snake, &mut current_fruit_point, &mut score);
-                if !check_inbounds(&snake, &grid) || check_self_eat(&snake) {
+                if !check_inbounds(&snake, &grid) || snake.check_self_eat() {
                     game_over = true;
                 }
                 last_movement_update = get_time();
