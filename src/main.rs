@@ -76,7 +76,8 @@ async fn main() {
         looped: true,
         volume: 0.5,
     };
-    let mut snake: Snake = Snake::new();
+    let snake_head_texture = load_texture("snake-head.png").await.unwrap();
+    let mut snake: Snake = Snake::new(snake_head_texture);
     let grid: GameGrid = GameGrid::new(screen_width(), screen_height(), GRID_SIZE);
     let mut game_over: bool = false;
     let mut snake_controller: SnakeController = SnakeController::new(snake.dir.clone());
@@ -151,11 +152,7 @@ async fn main() {
             );
 
             if is_key_down(KeyCode::Enter) {
-                snake = Snake {
-                    head: (0, 0),
-                    dir: (1, 0),
-                    body: LinkedList::new(),
-                };
+                snake.reset();
                 current_fruit_point = spawn_fruit();
                 score = 0;
                 last_movement_update = get_time();
