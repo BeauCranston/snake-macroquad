@@ -34,11 +34,14 @@ fn update(snake: &mut Snake, current_fruit_point: &mut Point, score: &mut i32) {
     // save current head in variable
     let old_head = snake.head.clone();
     //move snake head to new position
-    snake.head = (snake.head.0 + snake.dir.0, snake.head.1 + snake.dir.1);
+    snake.head.location = (
+        snake.head.location.0 + snake.head.dir.0,
+        snake.head.location.1 + snake.head.dir.1,
+    );
     //push old head to body
     snake.body.push_front(old_head);
-    let eating_fruit =
-        snake.head.0 == current_fruit_point.0 && snake.head.1 == current_fruit_point.1;
+    let eating_fruit = snake.head.location.0 == current_fruit_point.0
+        && snake.head.location.1 == current_fruit_point.1;
     if !eating_fruit {
         //pop off end of tail
         snake.body.pop_back();
@@ -53,15 +56,15 @@ fn update(snake: &mut Snake, current_fruit_point: &mut Point, score: &mut i32) {
 fn check_self_eat(snake: &Snake) -> bool {
     let mut eating_self = false;
     for node in &snake.body {
-        if snake.head.0 == node.0 && snake.head.1 == node.1 {
+        if snake.head.location.0 == node.location.0 && snake.head.location.1 == node.location.1 {
             eating_self = true;
         }
     }
     eating_self
 }
 fn check_inbounds(snake: &Snake, grid: &GameGrid) -> bool {
-    return (0.0 <= snake.head.0 as f32 && grid.grid_size > snake.head.0 as f32)
-        && (0.0 <= snake.head.1 as f32 && grid.grid_size > snake.head.1 as f32);
+    return (0.0 <= snake.head.location.0 as f32 && grid.grid_size > snake.head.location.0 as f32)
+        && (0.0 <= snake.head.location.1 as f32 && grid.grid_size > snake.head.location.1 as f32);
 }
 
 fn fruit_has_been_eaten(current_fruit_point: &Point) -> bool {
@@ -84,7 +87,7 @@ async fn main() {
     let mut snake: Snake = Snake::new(snake_head_texture, snake_body_texture);
     let grid: GameGrid = GameGrid::new(screen_width(), screen_height(), GRID_SIZE);
     let mut game_over: bool = false;
-    let mut snake_controller: SnakeController = SnakeController::new(snake.dir.clone());
+    let mut snake_controller: SnakeController = SnakeController::new(snake.head.dir.clone());
     let speed = 0.2;
     let food_spawn_rate = 2.0;
     let mut score = 0 as i32;

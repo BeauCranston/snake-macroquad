@@ -9,34 +9,42 @@ use macroquad::{
 
 use crate::{Point, types::game_grid::GameGrid};
 
+#[derive(Copy, Clone)]
+pub struct VectorPoint {
+    pub location: Point,
+    pub dir: Point,
+}
+
 pub struct Snake {
-    pub head: Point,
+    pub head: VectorPoint,
     pub head_texture: Texture2D,
     pub body_texture: Texture2D,
-    pub dir: Point,
-    pub body: LinkedList<Point>,
-    pub dir_change_points: LinkedList<Point>,
+    pub body: LinkedList<VectorPoint>,
 }
 
 impl Snake {
     pub fn new(head_texture: Texture2D, body_texture: Texture2D) -> Snake {
         Snake {
-            head: (8, 8),
+            head: {
+                VectorPoint {
+                    location: (8, 8),
+                    dir: (1, 0),
+                }
+            },
             head_texture: head_texture,
             body_texture: body_texture,
-            dir: (1, 0),
             body: LinkedList::new(),
-            dir_change_points: LinkedList::new(),
         }
     }
     pub fn reset(&mut self) {
-        self.head = (8, 8);
+        self.head = VectorPoint {
+            location: (8, 8),
+            dir: (1, 0),
+        };
         self.body = LinkedList::new();
-        self.dir_change_points = LinkedList::new();
-        self.dir = (1, 0);
     }
-    fn draw_snake_part_two(&self, grid: &GameGrid, point: &Point, texture: &Texture2D) {
-        let rotation = match self.dir.0 {
+    fn draw_snake_part(grid: &GameGrid, point: &VectorPoint, texture: &Texture2D) {
+        let rotation = match point.dir.0 {
             //convert degrees to radians
             -1 => -90.0 * (PI / 180.0),
             0 => 0.0,
@@ -46,26 +54,31 @@ impl Snake {
         };
         draw_texture_ex(
             texture,
-            grid.offset_x + point.0 as f32 * grid.square_size,
-            grid.offset_y + point.1 as f32 * grid.square_size,
+            grid.offset_x + point.location.0 as f32 * grid.square_size,
+            grid.offset_y + point.location.1 as f32 * grid.square_size,
             WHITE,
             DrawTextureParams {
                 dest_size: Some(vec2(grid.square_size, grid.square_size)),
                 rotation: rotation,
-                flip_y: self.dir.1 > 0,
+                flip_y: point.dir.1 > 0,
                 ..Default::default()
             },
         );
     }
     pub fn change_dir(&mut self, point: Point) {
-        self.dir = point;
+        self.head.dir = point;
     }
+    //change body direction:
+    //push change point when direction changes ^
+    //if the point is on a direction change, change the direction to the points dir
+    //if the tail of the snake has reached the direction change point, pop it off the stack
+    //how do I know if the body point has hit a direction change? (loop?, refactor!)
     pub fn draw(&self, grid: &GameGrid) {
         //draw head
-        Self::draw_snake_part_two(self, grid, &self.head, &self.head_texture);
+        Self::draw_snake_part(grid, &self.head, &self.head_texture);
 
         for point in &self.body {
-            Self::draw_snake_part_two(self, grid, point, &self.body_texture);
+            Self::draw_snake_part(grid, point, &self.body_texture);
             // Self::draw_snake_part(grid, point, GREEN);
         }
     }
